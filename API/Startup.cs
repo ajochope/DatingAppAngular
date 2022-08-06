@@ -22,15 +22,23 @@ namespace API
         {
             Configuration = configuration;
         }
-
+        readonly string MyAllowSpecificOrigins = "_myAllowSpecificOrigins";
         public IConfiguration Configuration { get; }
 
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-
             services.AddDbContext<DataContext>(options => {
                 options.UseSqlite(Configuration.GetConnectionString("DefaultConnection"));
+            });
+            services.AddCors(opt =>
+            {
+                opt.AddPolicy(name: MyAllowSpecificOrigins,
+                            policy =>
+                            {
+                                policy.WithOrigins(
+                                "http://192.168.1.250:4200");
+                            });
             });
             services.AddControllers();
             services.AddSwaggerGen(c =>
@@ -50,8 +58,12 @@ namespace API
             }
 
             app.UseHttpsRedirection();
-
+            
+            app.UseStaticFiles();
+            
             app.UseRouting();
+
+            app.UseCors(MyAllowSpecificOrigins);
 
             app.UseAuthorization();
 
