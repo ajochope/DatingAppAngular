@@ -33,7 +33,7 @@ namespace API
                 opt.AddPolicy(name: MyAllowSpecificOrigins,
                             policy =>
                             {
-                                policy.WithOrigins(
+                                policy.AllowAnyMethod().AllowAnyHeader().WithOrigins(
                                 "http://192.168.1.250:4200",
                                 "http://192.168.1.250:5555");
                             });
